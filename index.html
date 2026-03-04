@@ -3,12 +3,12 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Trivia Night Live Leaderboard</title>
+  <title>MTCS Trivia Night Live Leaderboard</title>
   <style>
     :root{
-      --bg0:#070A12;
-      --bg1:#0B1430;
-      --bg2:#1B0E2A;
+      --bg0:#000000;
+      --bg1:#000000;
+      --bg2:#000000;
 
       --text: rgba(255,255,255,0.94);
       --muted: rgba(255,255,255,0.70);
@@ -175,7 +175,7 @@
         inset 0 0 22px rgba(255,215,0,0.10);
     }
     tr.top2{
-      background: linear-gradient(90deg, var(--silver1), var(--silver2), transparent 70%);
+      background: linear-gradient(90deg, var(--silver1), var(--silver2), transparent 90%);
       box-shadow:
         inset 0 0 0 1px rgba(220,220,220,0.20),
         inset 0 0 18px rgba(220,220,220,0.08);
@@ -215,7 +215,7 @@
 <body>
   <header>
     <div class="title-row">
-      <h1>Trivia Night • Live Leaderboard</h1>
+      <h1>MTCS Trivia Night • Live Leaderboard</h1>
       <div class="meta">
         <div class="pill" id="refreshPill">Refreshing…</div>
         <div class="pill" id="updatedPill">Last update: —</div>
@@ -248,11 +248,11 @@
     "https://docs.google.com/spreadsheets/d/1AFZrC9idkuIs2dc4uAkRK8kZiTtLtvMgR7x21Wic22o/export?format=csv&gid=1580807625";
 
   // Refresh cadence
-  const REFRESH_MS = 4000;
+  const REFRESH_MS = 20000;
 
   // ✅ TRUE slow scroll: pixels per second
-  const SCROLL_PX_PER_SECOND = 25; // try 6 (very slow) or 12 (slow)
-  const PAUSE_AT_TOP_MS = 3500;
+  const SCROLL_PX_PER_SECOND = 75; // try 6 (very slow) or 12 (slow)
+  const PAUSE_AT_TOP_MS = 10000;
   const PAUSE_AT_BOTTOM_MS = 1500;
 
   const tbody = document.getElementById("tbody");
