@@ -14,14 +14,15 @@
       --muted: rgba(255,255,255,0.70);
       --line: rgba(255,255,255,0.14);
 
-      --gold1: rgba(255,215,0,0.62);
-      --gold2: rgba(255,215,0,0.18);
+      --gold1: rgba(255,215,0,0.70);
+      --gold2: rgba(255,215,0,0.22);
 
-      --silver1: rgba(220,220,220,0.45);
-      --silver2: rgba(220,220,220,0.14);
+      /* Silver */
+      --silver1: rgba(255,255,255,0.55);
+      --silver2: rgba(255,255,255,0.18);
 
-      --bronze1: rgba(205,127,50,0.48);
-      --bronze2: rgba(205,127,50,0.14);
+      --bronze1: rgba(205,127,50,0.55);
+      --bronze2: rgba(205,127,50,0.18);
     }
 
     body{
@@ -35,14 +36,15 @@
         linear-gradient(140deg, var(--bg0), var(--bg1) 45%, var(--bg2));
     }
 
+    /* ORANGE HEADER */
     header{
       position: sticky;
       top: 0;
       z-index: 10;
-      backdrop-filter: blur(10px);
-      background: linear-gradient(to bottom, rgba(7,10,18,0.95), rgba(7,10,18,0.55));
-      border-bottom: 1px solid var(--line);
+      background: #FF6B00;
+      border-bottom: 2px solid rgba(0,0,0,0.25);
       padding: 14px 16px;
+      backdrop-filter: none;
     }
 
     .title-row{
@@ -53,27 +55,36 @@
       flex-wrap: wrap;
     }
 
+    /* White text with black outline for title */
     h1{
       margin:0;
       font-size: clamp(18px, 2.6vw, 34px);
       letter-spacing: 0.4px;
+      color: #fff;
+      text-shadow:
+        -2px -2px 0 #000,
+         2px -2px 0 #000,
+        -2px  2px 0 #000,
+         2px  2px 0 #000,
+         0px  3px 8px rgba(0,0,0,0.25);
     }
 
     .meta{
       display:flex;
       gap: 10px;
       font-size: clamp(12px, 1.4vw, 15px);
-      color: var(--muted);
+      color: rgba(0,0,0,0.85);
       align-items:center;
       flex-wrap: wrap;
     }
 
     .pill{
       padding: 6px 10px;
-      border: 1px solid var(--line);
-      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(0,0,0,0.25);
+      background: rgba(255,255,255,0.28);
       border-radius: 999px;
       white-space: nowrap;
+      color: #000;
     }
 
     main{ padding: 14px 16px 22px; }
@@ -86,7 +97,6 @@
       box-shadow: 0 14px 60px rgba(0,0,0,0.45);
     }
 
-    /* IMPORTANT: stable height so we can compute scroll correctly */
     #scroller{
       height: calc(100vh - 140px);
       overflow: hidden;
@@ -118,79 +128,97 @@
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
+      background: transparent; /* allow row gradients to show */
     }
 
     tbody tr:nth-child(2n){
       background: rgba(255,255,255,0.02);
     }
 
-    /* Column sizing */
     th.rank, td.rank{ width: 68px; font-variant-numeric: tabular-nums; }
     th.team, td.team{ width: 34%; }
 
-    /* TOTAL right after Team — BIG + BOLD + highlighted */
+    /* Team names larger */
+    td.team{
+      font-size: clamp(16px, 2.1vw, 26px);
+    }
+
     th.total, td.total{
       width: 130px;
       text-align:right;
       font-variant-numeric: tabular-nums;
     }
+
+    /* Default TOTAL style: WHITE for everyone */
     td.total.total-emphasis{
       font-weight: 950;
       font-size: clamp(18px, 2.5vw, 32px);
-      color: rgba(255, 70, 70, 0.98);
+      color: rgba(255,255,255,0.98);
       letter-spacing: 0.2px;
     }
-    /* add a glow “pill” look */
     td.total.total-emphasis > span{
       display:inline-block;
       padding: 4px 10px;
       border-radius: 12px;
-      background: rgba(255, 70, 70, 0.12);
-      border: 1px solid rgba(255, 70, 70, 0.30);
-      box-shadow: 0 0 18px rgba(255, 70, 70, 0.18);
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.22);
+      box-shadow: 0 0 18px rgba(255,255,255,0.10);
       min-width: 64px;
       text-align:right;
     }
 
-    /* Round columns compact */
+    /* ONLY rank=1 gets red total */
+    tr.firstplace td.total.total-emphasis{
+      color: rgba(255, 70, 70, 0.98);
+    }
+    tr.firstplace td.total.total-emphasis > span{
+      background: rgba(255, 70, 70, 0.12);
+      border: 1px solid rgba(255, 70, 70, 0.30);
+      box-shadow: 0 0 18px rgba(255, 70, 70, 0.18);
+    }
+
+    /* Rounds bigger */
     th.round, td.round{
       width: 56px;
       text-align:center;
       font-variant-numeric: tabular-nums;
     }
     td.round{
-      font-size: clamp(12px, 1.25vw, 16px);
-      color: rgba(255,255,255,0.82);
+      font-size: clamp(14px, 1.7vw, 20px);
+      font-weight: 800;
+      color: rgba(255,255,255,0.92);
     }
     th.round{
-      font-size: clamp(11px, 1.15vw, 14px);
-      color: rgba(255,255,255,0.70);
+      font-size: clamp(12px, 1.25vw, 15px);
+      color: rgba(255,255,255,0.78);
     }
 
-    /* Top 3 styling */
-    tr.top1{
-      background: linear-gradient(90deg, var(--gold1), var(--gold2), transparent 70%);
+    /* Top 3 rows (force them to win) */
+    tbody tr.top1{
+      background: linear-gradient(90deg, var(--gold1), var(--gold2), transparent 70%) !important;
       box-shadow:
-        inset 0 0 0 1px rgba(255,215,0,0.28),
-        inset 0 0 22px rgba(255,215,0,0.10);
+        inset 0 0 0 2px rgba(255,215,0,0.28),
+        inset 0 0 22px rgba(255,215,0,0.12);
     }
-    tr.top2{
-      background: linear-gradient(90deg, var(--silver1), var(--silver2), transparent 90%);
+    tbody tr.top2{
+      background: linear-gradient(90deg, var(--silver1), var(--silver2), transparent 72%) !important;
       box-shadow:
-        inset 0 0 0 1px rgba(220,220,220,0.20),
-        inset 0 0 18px rgba(220,220,220,0.08);
+        inset 0 0 0 3px rgba(255,255,255,0.32),
+        inset 0 0 28px rgba(255,255,255,0.14);
     }
-    tr.top3{
-      background: linear-gradient(90deg, var(--bronze1), var(--bronze2), transparent 70%);
+    tbody tr.top3{
+      background: linear-gradient(90deg, var(--bronze1), var(--bronze2), transparent 70%) !important;
       box-shadow:
-        inset 0 0 0 1px rgba(205,127,50,0.20),
-        inset 0 0 18px rgba(205,127,50,0.08);
+        inset 0 0 0 2px rgba(205,127,50,0.22),
+        inset 0 0 18px rgba(205,127,50,0.10);
     }
+
+    tbody tr.top2 td{ color: rgba(255,255,255,0.98); }
 
     tr.top1 td.rank{ color: rgba(255,235,130,1); font-weight: 900; }
-    tr.top2 td.rank{ color: rgba(235,235,235,1); font-weight: 900; }
+    tr.top2 td.rank{ color: rgba(255,255,255,1); font-weight: 900; }
     tr.top3 td.rank{ color: rgba(255,205,165,1); font-weight: 900; }
-    tr.top1 td.team, tr.top2 td.team, tr.top3 td.team{ font-weight: 800; }
+    tr.top1 td.team, tr.top2 td.team, tr.top3 td.team{ font-weight: 900; }
 
     .status{
       margin-top: 10px;
@@ -247,13 +275,12 @@
   const CSV_URL =
     "https://docs.google.com/spreadsheets/d/1AFZrC9idkuIs2dc4uAkRK8kZiTtLtvMgR7x21Wic22o/export?format=csv&gid=1580807625";
 
-  // Refresh cadence
   const REFRESH_MS = 20000;
 
-  // ✅ TRUE slow scroll: pixels per second
-  const SCROLL_PX_PER_SECOND = 75; // try 6 (very slow) or 12 (slow)
-  const PAUSE_AT_TOP_MS = 10000;
-  const PAUSE_AT_BOTTOM_MS = 1500;
+  // ✅ 100 is VERY FAST. Use 5–12 for a TV leaderboard.
+  const SCROLL_PX_PER_SECOND = 80;
+  const PAUSE_AT_TOP_MS = 30000;
+  const PAUSE_AT_BOTTOM_MS = 5000;
 
   const tbody = document.getElementById("tbody");
   const headerRow = document.getElementById("headerRow");
@@ -267,7 +294,7 @@
   let idxRank = -1;
   let idxTeam = -1;
   let idxTotal = -1;
-  let roundCols = []; // {label, idx}
+  let roundCols = [];
 
   function parseCSV(text){
     const rows = [];
@@ -320,7 +347,6 @@
       roundCols.push({ label, idx: i });
     }
 
-    // ✅ Force: Rank | Team | Total | Rounds...
     headerRow.innerHTML = `
       <th class="rank">Rank</th>
       <th class="team">Team</th>
@@ -362,7 +388,6 @@
       });
     }
 
-    // Sort by numeric rank asc; fallback to total desc if rank missing
     data.sort((a,b) => {
       const ar = a.rankNum, br = b.rankNum;
       if (ar && br) return ar - br;
@@ -381,7 +406,10 @@
     }
 
     tbody.innerHTML = data.map((d, i) => {
-      const cls = (i===0) ? "top1" : (i===1) ? "top2" : (i===2) ? "top3" : "";
+      const clsTop = (i===0) ? "top1" : (i===1) ? "top2" : (i===2) ? "top3" : "";
+      const isFirstPlaceRank = String(d.rank).trim() === "1";
+      const clsFirst = isFirstPlaceRank ? "firstplace" : "";
+      const cls = [clsTop, clsFirst].filter(Boolean).join(" ");
 
       const roundsHtml = roundCols.map((c, j) => {
         const hideClass = (j >= 3) ? "hide-on-phone" : "";
@@ -412,7 +440,6 @@
       const rows = parseCSV(text);
       const data = normalize(rows);
 
-      // Keep your current scroll position during refresh (no jumping)
       const oldScroll = scroller.scrollTop;
       render(data);
       scroller.scrollTop = oldScroll;
@@ -426,21 +453,17 @@
     }
   }
 
-  // ✅ Smooth, time-based scrolling (slows predictably)
   let lastTs = null;
   function tick(ts){
     if (lastTs === null) lastTs = ts;
-    const dt = (ts - lastTs) / 1000; // seconds
+    const dt = (ts - lastTs) / 1000;
     lastTs = ts;
 
     if (!isPaused){
       const maxScroll = Math.max(0, scroller.scrollHeight - scroller.clientHeight);
-
-      // Only scroll if there *is* more content than the viewport
       if (maxScroll > 0){
         scroller.scrollTop += SCROLL_PX_PER_SECOND * dt;
 
-        // IMPORTANT: use epsilon so we truly hit bottom
         if (scroller.scrollTop >= maxScroll - 1){
           isPaused = true;
           setTimeout(() => {
@@ -450,7 +473,6 @@
         }
       }
     }
-
     requestAnimationFrame(tick);
   }
 
