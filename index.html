@@ -86,8 +86,9 @@
       box-shadow: 0 14px 60px rgba(0,0,0,0.45);
     }
 
+    /* IMPORTANT: stable height so we can compute scroll correctly */
     #scroller{
-      height: calc(100vh - 128px);
+      height: calc(100vh - 140px);
       overflow: hidden;
       position: relative;
     }
@@ -106,7 +107,7 @@
       padding: 12px 10px;
       font-size: clamp(12px, 1.5vw, 16px);
       color: rgba(255,255,255,0.78);
-      background: rgba(7,10,18,0.86);
+      background: rgba(7,10,18,0.90);
       border-bottom: 1px solid var(--line);
     }
 
@@ -125,27 +126,35 @@
 
     /* Column sizing */
     th.rank, td.rank{ width: 68px; font-variant-numeric: tabular-nums; }
-    th.team, td.team{ width: 32%; }
+    th.team, td.team{ width: 34%; }
 
-    /* Total next to Team: bigger, bolder, red */
+    /* TOTAL right after Team — BIG + BOLD + highlighted */
     th.total, td.total{
-      width: 110px;
+      width: 130px;
       text-align:right;
       font-variant-numeric: tabular-nums;
     }
     td.total.total-emphasis{
-      font-weight: 900;
-      font-size: clamp(18px, 2.3vw, 30px);
-      color: rgba(255, 70, 70, 0.95);
+      font-weight: 950;
+      font-size: clamp(18px, 2.5vw, 32px);
+      color: rgba(255, 70, 70, 0.98);
       letter-spacing: 0.2px;
     }
-    th.total.total-emphasis{
-      color: rgba(255, 170, 170, 0.90);
+    /* add a glow “pill” look */
+    td.total.total-emphasis > span{
+      display:inline-block;
+      padding: 4px 10px;
+      border-radius: 12px;
+      background: rgba(255, 70, 70, 0.12);
+      border: 1px solid rgba(255, 70, 70, 0.30);
+      box-shadow: 0 0 18px rgba(255, 70, 70, 0.18);
+      min-width: 64px;
+      text-align:right;
     }
 
-    /* Round columns: compact */
+    /* Round columns compact */
     th.round, td.round{
-      width: 58px;
+      width: 56px;
       text-align:center;
       font-variant-numeric: tabular-nums;
     }
@@ -194,9 +203,9 @@
     }
 
     @media (max-width: 560px){
-      #scroller{ height: calc(100vh - 150px); }
-      th.team, td.team{ width: 46%; }
-      th.total, td.total{ width: 96px; }
+      #scroller{ height: calc(100vh - 160px); }
+      th.team, td.team{ width: 48%; }
+      th.total, td.total{ width: 110px; }
       td.total.total-emphasis{ font-size: 20px; }
       .hide-on-phone{ display:none; }
     }
@@ -238,14 +247,13 @@
   const CSV_URL =
     "https://docs.google.com/spreadsheets/d/1AFZrC9idkuIs2dc4uAkRK8kZiTtLtvMgR7x21Wic22o/export?format=csv&gid=1580807625";
 
-  // ✅ MUCH slower scroll (raise SCROLL_TICK_MS to 220 for even slower)
-  const SCROLL_PX_PER_TICK = 1;
-  const SCROLL_TICK_MS = 580;
-  const PAUSE_AT_TOP_MS = 5000;
-  const PAUSE_AT_BOTTOM_MS = 1000;
-
   // Refresh cadence
-  const REFRESH_MS = 15000;
+  const REFRESH_MS = 4000;
+
+  // ✅ TRUE slow scroll: pixels per second
+  const SCROLL_PX_PER_SECOND = 10; // try 6 (very slow) or 12 (slow)
+  const PAUSE_AT_TOP_MS = 1500;
+  const PAUSE_AT_BOTTOM_MS = 3500;
 
   const tbody = document.getElementById("tbody");
   const headerRow = document.getElementById("headerRow");
@@ -254,7 +262,6 @@
   const updatedPill = document.getElementById("updatedPill");
   const errorText = document.getElementById("errorText");
 
-  let scrollTimer = null;
   let isPaused = false;
 
   let idxRank = -1;
@@ -301,12 +308,10 @@
     idxTeam = hl.indexOf("team");
     idxTotal = hl.indexOf("total");
 
-    // fallback positions if needed
     if (idxRank < 0) idxRank = 0;
     if (idxTeam < 0) idxTeam = 1;
     if (idxTotal < 0) idxTotal = 2;
 
-    // Round columns are everything except rank/team/total (R1..R10 + Bonus)
     roundCols = [];
     for (let i=0; i<h.length; i++){
       if (i === idxRank || i === idxTeam || i === idxTotal) continue;
@@ -315,7 +320,7 @@
       roundCols.push({ label, idx: i });
     }
 
-    // Header order: Rank | Team | Total | Rounds...
+    // ✅ Force: Rank | Team | Total | Rounds...
     headerRow.innerHTML = `
       <th class="rank">Rank</th>
       <th class="team">Team</th>
@@ -334,7 +339,6 @@
 
   function normalize(rows){
     if (!rows.length) return [];
-
     const header = rows[0];
     buildColumns(header);
 
@@ -358,7 +362,7 @@
       });
     }
 
-    // Sort by numeric rank ascending; if blank, fallback to Total desc
+    // Sort by numeric rank asc; fallback to total desc if rank missing
     data.sort((a,b) => {
       const ar = a.rankNum, br = b.rankNum;
       if (ar && br) return ar - br;
@@ -389,12 +393,10 @@
         <tr class="${cls}">
           <td class="rank">${esc(d.rank || (i+1))}</td>
           <td class="team">${esc(d.team)}</td>
-          <td class="total total-emphasis">${esc(d.total)}</td>
+          <td class="total total-emphasis"><span>${esc(d.total)}</span></td>
           ${roundsHtml}
         </tr>`;
     }).join("");
-
-    scroller.scrollTop = 0;
   }
 
   async function refresh(){
@@ -409,7 +411,11 @@
       const text = await res.text();
       const rows = parseCSV(text);
       const data = normalize(rows);
+
+      // Keep your current scroll position during refresh (no jumping)
+      const oldScroll = scroller.scrollTop;
       render(data);
+      scroller.scrollTop = oldScroll;
 
       updatedPill.textContent = "Last update: " + new Date().toLocaleTimeString();
       refreshPill.textContent = "Live";
@@ -420,30 +426,37 @@
     }
   }
 
-  function startAutoScroll(){
-    if (scrollTimer) clearInterval(scrollTimer);
+  // ✅ Smooth, time-based scrolling (slows predictably)
+  let lastTs = null;
+  function tick(ts){
+    if (lastTs === null) lastTs = ts;
+    const dt = (ts - lastTs) / 1000; // seconds
+    lastTs = ts;
 
-    scrollTimer = setInterval(() => {
-      if (isPaused) return;
-
+    if (!isPaused){
       const maxScroll = Math.max(0, scroller.scrollHeight - scroller.clientHeight);
-      if (maxScroll <= 0) return;
 
-      scroller.scrollTop += SCROLL_PX_PER_TICK;
+      // Only scroll if there *is* more content than the viewport
+      if (maxScroll > 0){
+        scroller.scrollTop += SCROLL_PX_PER_SECOND * dt;
 
-      if (scroller.scrollTop >= maxScroll - 2){
-        isPaused = true;
-        setTimeout(() => {
-          scroller.scrollTop = 0;
-          setTimeout(() => { isPaused = false; }, PAUSE_AT_TOP_MS);
-        }, PAUSE_AT_BOTTOM_MS);
+        // IMPORTANT: use epsilon so we truly hit bottom
+        if (scroller.scrollTop >= maxScroll - 1){
+          isPaused = true;
+          setTimeout(() => {
+            scroller.scrollTop = 0;
+            setTimeout(() => { isPaused = false; }, PAUSE_AT_TOP_MS);
+          }, PAUSE_AT_BOTTOM_MS);
+        }
       }
-    }, SCROLL_TICK_MS);
+    }
+
+    requestAnimationFrame(tick);
   }
 
   refresh();
   setInterval(refresh, REFRESH_MS);
-  startAutoScroll();
+  requestAnimationFrame(tick);
 </script>
 </body>
 </html>
