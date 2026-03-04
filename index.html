@@ -1,4 +1,3 @@
-```html
 <!doctype html>
 <html lang="en">
 <head>
@@ -7,32 +6,51 @@
   <title>Trivia Night Live Leaderboard</title>
   <style>
     :root{
-      --bg: #0b0f1a;
+      --bg0:#070A12;
+      --bg1:#0B1430;
+      --bg2:#1B0E2A;
+
+      --text: rgba(255,255,255,0.94);
+      --muted: rgba(255,255,255,0.70);
+      --line: rgba(255,255,255,0.14);
+
       --panel: rgba(255,255,255,0.06);
-      --text: rgba(255,255,255,0.92);
-      --muted: rgba(255,255,255,0.65);
-      --line: rgba(255,255,255,0.12);
-      --gold: rgba(255,215,0,0.35);
-      --silver: rgba(192,192,192,0.28);
-      --bronze: rgba(205,127,50,0.28);
+
+      --gold1: rgba(255,215,0,0.55);
+      --gold2: rgba(255,215,0,0.18);
+
+      --silver1: rgba(192,192,192,0.45);
+      --silver2: rgba(192,192,192,0.16);
+
+      --bronze1: rgba(205,127,50,0.45);
+      --bronze2: rgba(205,127,50,0.16);
+
+      --accentA: rgba(96, 165, 250, 0.55); /* blue */
+      --accentB: rgba(244, 114, 182, 0.45); /* pink */
+      --accentC: rgba(52, 211, 153, 0.45); /* green */
     }
+
     body{
       margin:0;
       font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-      background: radial-gradient(1200px 600px at 20% 10%, rgba(80,140,255,0.25), transparent 60%),
-                  radial-gradient(900px 500px at 90% 30%, rgba(255,90,170,0.18), transparent 55%),
-                  var(--bg);
       color: var(--text);
+      background:
+        radial-gradient(1100px 600px at 15% 10%, rgba(96,165,250,0.22), transparent 60%),
+        radial-gradient(900px 500px at 80% 20%, rgba(244,114,182,0.16), transparent 55%),
+        radial-gradient(900px 650px at 70% 90%, rgba(52,211,153,0.14), transparent 55%),
+        linear-gradient(140deg, var(--bg0), var(--bg1) 45%, var(--bg2));
     }
+
     header{
       position: sticky;
       top: 0;
-      z-index: 5;
+      z-index: 10;
       backdrop-filter: blur(10px);
-      background: linear-gradient(to bottom, rgba(11,15,26,0.95), rgba(11,15,26,0.55));
+      background: linear-gradient(to bottom, rgba(7,10,18,0.95), rgba(7,10,18,0.55));
       border-bottom: 1px solid var(--line);
       padding: 14px 16px;
     }
+
     .title-row{
       display:flex;
       align-items:baseline;
@@ -40,19 +58,22 @@
       gap: 12px;
       flex-wrap: wrap;
     }
+
     h1{
       margin:0;
-      font-size: clamp(18px, 3vw, 34px);
-      letter-spacing: 0.5px;
+      font-size: clamp(18px, 2.6vw, 34px);
+      letter-spacing: 0.4px;
     }
+
     .meta{
       display:flex;
-      gap: 14px;
-      font-size: clamp(12px, 1.7vw, 16px);
+      gap: 10px;
+      font-size: clamp(12px, 1.4vw, 15px);
       color: var(--muted);
       align-items:center;
       flex-wrap: wrap;
     }
+
     .pill{
       padding: 6px 10px;
       border: 1px solid var(--line);
@@ -60,47 +81,94 @@
       border-radius: 999px;
       white-space: nowrap;
     }
-    main{ padding: 14px 16px 24px; }
+
+    main{ padding: 14px 16px 22px; }
+
     .board{
       border: 1px solid var(--line);
       background: rgba(255,255,255,0.03);
       border-radius: 16px;
       overflow: hidden;
-      box-shadow: 0 10px 50px rgba(0,0,0,0.35);
+      box-shadow: 0 14px 60px rgba(0,0,0,0.45);
     }
+
     #scroller{
-      height: calc(100vh - 130px);
+      height: calc(100vh - 128px);
       overflow: hidden;
       position: relative;
     }
+
     table{
       width:100%;
       border-collapse: collapse;
+      table-layout: fixed; /* helps fill 16:9 nicely */
     }
+
     thead th{
       position: sticky;
       top: 0;
-      z-index: 2;
+      z-index: 5;
       text-align:left;
       padding: 12px 12px;
-      font-size: clamp(12px, 1.8vw, 16px);
-      color: var(--muted);
-      background: rgba(11,15,26,0.85);
+      font-size: clamp(12px, 1.6vw, 16px);
+      color: rgba(255,255,255,0.78);
+      background: rgba(7,10,18,0.86);
       border-bottom: 1px solid var(--line);
     }
+
     tbody td{
       padding: 12px 12px;
-      border-bottom: 1px solid var(--line);
-      font-size: clamp(14px, 2vw, 20px);
+      border-bottom: 1px solid rgba(255,255,255,0.10);
+      font-size: clamp(14px, 1.8vw, 20px);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
+
     tbody tr:nth-child(2n){
       background: rgba(255,255,255,0.02);
     }
-    td.rank{ width: 80px; font-variant-numeric: tabular-nums; }
-    td.total{ width: 110px; text-align:right; font-variant-numeric: tabular-nums; }
-    tr.top1{ background: linear-gradient(to right, var(--gold), transparent 55%); }
-    tr.top2{ background: linear-gradient(to right, var(--silver), transparent 55%); }
-    tr.top3{ background: linear-gradient(to right, var(--bronze), transparent 55%); }
+
+    /* Column sizing */
+    th.rank, td.rank{ width: 72px; font-variant-numeric: tabular-nums; }
+    th.total, td.total{ width: 100px; text-align:right; font-variant-numeric: tabular-nums; }
+    th.team, td.team{ width: 28%; }
+
+    /* Round columns: auto-fit several across the screen */
+    th.round, td.round{
+      text-align:center;
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* Make Total pop a bit */
+    td.total{
+      color: rgba(255,255,255,0.95);
+      font-weight: 650;
+    }
+
+    /* Top 3 styling */
+    tr.top1{
+      background: linear-gradient(90deg, var(--gold1), var(--gold2), transparent 65%);
+      box-shadow: inset 0 0 0 1px rgba(255,215,0,0.25);
+    }
+    tr.top2{
+      background: linear-gradient(90deg, var(--silver1), var(--silver2), transparent 65%);
+      box-shadow: inset 0 0 0 1px rgba(192,192,192,0.20);
+    }
+    tr.top3{
+      background: linear-gradient(90deg, var(--bronze1), var(--bronze2), transparent 65%);
+      box-shadow: inset 0 0 0 1px rgba(205,127,50,0.20);
+    }
+
+    tr.top1 td.team{ font-weight: 750; }
+    tr.top2 td.team{ font-weight: 700; }
+    tr.top3 td.team{ font-weight: 700; }
+
+    /* Small “medal” badge on rank for top 3 */
+    tr.top1 td.rank{ color: rgba(255,235,130,1); font-weight: 800; }
+    tr.top2 td.rank{ color: rgba(230,230,230,1); font-weight: 800; }
+    tr.top3 td.rank{ color: rgba(255,200,150,1); font-weight: 800; }
+
     .status{
       margin-top: 10px;
       font-size: 13px;
@@ -110,13 +178,19 @@
       gap: 10px;
       flex-wrap: wrap;
     }
-    @media (max-width: 480px){
-      td.rank{ width: 60px; }
-      td.total{ width: 90px; }
+
+    /* Phone portrait tweaks */
+    @media (max-width: 520px){
       #scroller{ height: calc(100vh - 150px); }
+      th.team, td.team{ width: 42%; }
+      th.total, td.total{ width: 90px; }
+      th.rank, td.rank{ width: 58px; }
+      /* hide some round columns on tiny screens */
+      .hide-on-phone{ display:none; }
     }
   </style>
 </head>
+
 <body>
   <header>
     <div class="title-row">
@@ -133,14 +207,15 @@
       <div id="scroller">
         <table>
           <thead>
-            <tr>
-              <th style="width:80px;">Rank</th>
-              <th>Team</th>
-              <th style="width:110px; text-align:right;">Total</th>
+            <tr id="headerRow">
+              <th class="rank">Rank</th>
+              <th class="team">Team</th>
+              <!-- round headers inserted dynamically -->
+              <th class="total">Total</th>
             </tr>
           </thead>
           <tbody id="tbody">
-            <tr><td colspan="3" style="padding:18px; color: rgba(255,255,255,0.75);">Loading…</td></tr>
+            <tr><td colspan="4" style="padding:18px; color: rgba(255,255,255,0.75);">Loading…</td></tr>
           </tbody>
         </table>
       </div>
@@ -158,13 +233,14 @@
     "https://docs.google.com/spreadsheets/d/1AFZrC9idkuIs2dc4uAkRK8kZiTtLtvMgR7x21Wic22o/export?format=csv&gid=1580807625";
 
   // Refresh + scroll tuning
-  const REFRESH_MS = 4000;       // pull new standings every 4 seconds
-  const SCROLL_PX_PER_TICK = 1;  // speed
-  const SCROLL_TICK_MS = 35;     // smoothness
-  const PAUSE_AT_TOP_MS = 1200;
-  const PAUSE_AT_BOTTOM_MS = 1600;
+  const REFRESH_MS = 4000;        // pull new standings every 4 seconds
+  const SCROLL_PX_PER_TICK = 1;   // speed
+  const SCROLL_TICK_MS = 28;      // smoothness (slightly faster)
+  const PAUSE_AT_TOP_MS = 900;
+  const PAUSE_AT_BOTTOM_MS = 1400;
 
   const tbody = document.getElementById("tbody");
+  const headerRow = document.getElementById("headerRow");
   const scroller = document.getElementById("scroller");
   const refreshPill = document.getElementById("refreshPill");
   const updatedPill = document.getElementById("updatedPill");
@@ -172,9 +248,9 @@
 
   let scrollTimer = null;
   let isPaused = false;
+  let roundHeaders = []; // e.g. ["R1","R2",...]
 
   function parseCSV(text){
-    // Small CSV parser that handles quoted commas
     const rows = [];
     let row = [], field = "", inQuotes = false;
 
@@ -198,14 +274,52 @@
     return rows;
   }
 
-  function normalize(rows){
-    // Expect header: Rank, Team, Total (tolerant)
-    if (!rows.length) return [];
-    const header = rows[0].map(x => (x||"").trim().toLowerCase());
-    const idxRank = header.indexOf("rank");
-    const idxTeam = header.indexOf("team");
-    const idxTotal = header.indexOf("total");
+  function buildHeader(header){
+    // Expected: Rank, Team, Total, and any number of round columns like R1..Rn
+    // We'll place rounds between Team and Total.
+    const lower = header.map(h => (h||"").trim());
+    const findIndex = (name) => lower.findIndex(h => h.toLowerCase() === name.toLowerCase());
 
+    const idxRank = findIndex("Rank");
+    const idxTeam = findIndex("Team");
+    const idxTotal = findIndex("Total");
+
+    // Round columns = everything that's not rank/team/total, in their original order
+    const rounds = [];
+    for (let i=0; i<header.length; i++){
+      if (i === idxRank || i === idxTeam || i === idxTotal) continue;
+      const label = (header[i]||"").trim();
+      if (!label) continue;
+      rounds.push({ label, idx: i });
+    }
+
+    // Store for rendering rows
+    roundHeaders = rounds;
+
+    // Rebuild thead row
+    headerRow.innerHTML = `
+      <th class="rank">Rank</th>
+      <th class="team">Team</th>
+      ${rounds.map((r, i) => {
+        // Hide extra rounds on very small phones after 3 columns
+        const hideClass = (i >= 3) ? "hide-on-phone" : "";
+        return `<th class="round ${hideClass}">${r.label}</th>`;
+      }).join("")}
+      <th class="total">Total</th>
+    `;
+  }
+
+  function normalize(rows){
+    if (!rows.length) return { data: [], header: [] };
+
+    const header = rows[0].map(x => (x||"").trim());
+    const headerLower = header.map(h => h.toLowerCase());
+
+    const idxRank = headerLower.indexOf("rank");
+    const idxTeam = headerLower.indexOf("team");
+    const idxTotal = headerLower.indexOf("total");
+
+    // fallback positions
     const rI = idxRank >= 0 ? idxRank : 0;
     const tI = idxTeam >= 0 ? idxTeam : 1;
     const sI = idxTotal >= 0 ? idxTotal : 2;
@@ -214,39 +328,56 @@
     for (let i=1; i<rows.length; i++){
       const r = rows[i];
       if (!r || r.length < 2) continue;
+
       const rank = (r[rI] ?? "").trim();
       const team = (r[tI] ?? "").trim();
       const total = (r[sI] ?? "").trim();
       if (!team) continue;
-      data.push({ rank, team, total });
+
+      // round values pulled by header-built indices later
+      data.push({ rank, team, total, raw: r });
     }
 
     data.sort((a,b) => {
       const ar = parseFloat(a.rank), br = parseFloat(b.rank);
       if (Number.isFinite(ar) && Number.isFinite(br)) return ar - br;
-      return (a.rank||"").localeCompare(b.rank||"");
+      // If rank blanks, sort by total desc (optional fallback)
+      const at = parseFloat(a.total), bt = parseFloat(b.total);
+      if (Number.isFinite(at) && Number.isFinite(bt)) return bt - at;
+      return (a.team||"").localeCompare(b.team||"");
     });
 
-    return data;
+    return { data, header };
+  }
+
+  function esc(s){
+    return String(s ?? "")
+      .replaceAll("&","&amp;")
+      .replaceAll("<","&lt;")
+      .replaceAll(">","&gt;");
   }
 
   function render(data){
     if (!data.length){
-      tbody.innerHTML = `<tr><td colspan="3" style="padding:18px;">No data found. Check your WebExport tab.</td></tr>`;
+      tbody.innerHTML = `<tr><td colspan="4" style="padding:18px;">No data found. Check your WebExport tab.</td></tr>`;
       return;
     }
 
     tbody.innerHTML = data.map((d, i) => {
       const cls = (i===0) ? "top1" : (i===1) ? "top2" : (i===2) ? "top3" : "";
-      const safeTeam = d.team
-        .replaceAll("&","&amp;")
-        .replaceAll("<","&lt;")
-        .replaceAll(">","&gt;");
+
+      const roundsHtml = roundHeaders.map((r, j) => {
+        const hideClass = (j >= 3) ? "hide-on-phone" : "";
+        const v = (d.raw[r.idx] ?? "").trim();
+        return `<td class="round ${hideClass}">${esc(v)}</td>`;
+      }).join("");
+
       return `
         <tr class="${cls}">
-          <td class="rank">${d.rank || (i+1)}</td>
-          <td class="team">${safeTeam}</td>
-          <td class="total">${d.total}</td>
+          <td class="rank">${esc(d.rank || (i+1))}</td>
+          <td class="team">${esc(d.team)}</td>
+          ${roundsHtml}
+          <td class="total">${esc(d.total)}</td>
         </tr>`;
     }).join("");
 
@@ -258,14 +389,19 @@
       refreshPill.textContent = "Refreshing…";
       errorText.textContent = "";
 
-      // Bust caches
       const url = CSV_URL + (CSV_URL.includes("?") ? "&" : "?") + "t=" + Date.now();
       const res = await fetch(url, { cache: "no-store" });
       if (!res.ok) throw new Error(`Fetch failed (${res.status})`);
 
       const text = await res.text();
       const rows = parseCSV(text);
-      const data = normalize(rows);
+      const { data, header } = normalize(rows);
+
+      // Build header once (or if it changes)
+      if (header.length && (roundHeaders.length === 0)){
+        buildHeader(header);
+      }
+
       render(data);
 
       updatedPill.textContent = "Last update: " + new Date().toLocaleTimeString();
@@ -283,12 +419,13 @@
     scrollTimer = setInterval(() => {
       if (isPaused) return;
 
-      const maxScroll = scroller.scrollHeight - scroller.clientHeight;
+      const maxScroll = Math.max(0, scroller.scrollHeight - scroller.clientHeight);
       if (maxScroll <= 0) return;
 
       scroller.scrollTop += SCROLL_PX_PER_TICK;
 
-      if (scroller.scrollTop >= maxScroll){
+      // Use a small epsilon to ensure we hit bottom
+      if (scroller.scrollTop >= maxScroll - 2){
         isPaused = true;
         setTimeout(() => {
           scroller.scrollTop = 0;
@@ -300,9 +437,13 @@
 
   // Start
   refresh();
-  setInterval(refresh, REFRESH_MS);
+  setInterval(() => {
+    // if header changes (e.g. you add another round), rebuild on next refresh
+    roundHeaders = [];
+    refresh();
+  }, REFRESH_MS);
+
   startAutoScroll();
 </script>
 </body>
 </html>
-```
