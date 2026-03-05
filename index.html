@@ -58,7 +58,7 @@
     /* White text with black outline for title */
     h1{
       margin:0;
-      font-size: clamp(18px, 2.6vw, 34px);
+      font-size: clamp(34px, 2.6vw, 34px);
       letter-spacing: 0.4px;
       color: #fff;
       text-shadow:
@@ -72,7 +72,7 @@
     .meta{
       display:flex;
       gap: 10px;
-      font-size: clamp(12px, 1.4vw, 15px);
+      font-size: clamp(20px, 1.4vw, 15px);
       color: rgba(0,0,0,0.85);
       align-items:center;
       flex-wrap: wrap;
@@ -115,7 +115,7 @@
       z-index: 5;
       text-align:left;
       padding: 12px 10px;
-      font-size: clamp(12px, 1.5vw, 16px);
+      font-size: clamp(16px, 1.5vw, 16px);
       color: rgba(255,255,255,0.78);
       background: rgba(7,10,18,0.90);
       border-bottom: 1px solid var(--line);
@@ -124,7 +124,7 @@
     tbody td{
       padding: 11px 10px;
       border-bottom: 1px solid rgba(255,255,255,0.10);
-      font-size: clamp(14px, 1.75vw, 20px);
+      font-size: clamp(26px, 1.75vw, 20px);
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -140,7 +140,7 @@
 
     /* Team names larger */
     td.team{
-      font-size: clamp(16px, 2.1vw, 26px);
+      font-size: clamp(34px, 2.1vw, 26px);
     }
 
     th.total, td.total{
@@ -152,7 +152,7 @@
     /* Default TOTAL style: WHITE for everyone */
     td.total.total-emphasis{
       font-weight: 950;
-      font-size: clamp(18px, 2.5vw, 32px);
+      font-size: clamp(22px, 2.5vw, 32px);
       color: rgba(255,255,255,0.98);
       letter-spacing: 0.2px;
     }
@@ -184,12 +184,12 @@
       font-variant-numeric: tabular-nums;
     }
     td.round{
-      font-size: clamp(14px, 1.7vw, 20px);
+      font-size: clamp(18px, 1.7vw, 20px);
       font-weight: 800;
       color: rgba(255,255,255,0.92);
     }
     th.round{
-      font-size: clamp(12px, 1.25vw, 15px);
+      font-size: clamp(18px, 1.25vw, 15px);
       color: rgba(255,255,255,0.78);
     }
 
@@ -222,7 +222,7 @@
 
     .status{
       margin-top: 10px;
-      font-size: 13px;
+      font-size: 16px;
       color: var(--muted);
       display:flex;
       justify-content:space-between;
@@ -234,7 +234,7 @@
       #scroller{ height: calc(100vh - 160px); }
       th.team, td.team{ width: 48%; }
       th.total, td.total{ width: 110px; }
-      td.total.total-emphasis{ font-size: 20px; }
+      td.total.total-emphasis{ font-size: 26px; }
       .hide-on-phone{ display:none; }
     }
   </style>
